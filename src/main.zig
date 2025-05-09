@@ -3,87 +3,105 @@ const compiler = @import("compiler/compiler.zig");
 const vm = @import("vm/vm.zig");
 
 const print = std.debug.print;
+const eql = std.mem.eql;
+
+const allocator = std.heap.page_allocator;
+
+inline fn log(str: []const u8) void {
+    print("{s}\n", .{str});
+}
+
+fn createFile(path: []const u8, content: []const u8) !void {
+    const file = try std.fs.cwd().createFile(
+        path,
+        .{ .read = true },
+    );
+    defer file.close();
+    try file.writeAll(content);
+}
+
+fn makeDir(path: []const u8) !void {
+    try std.fs.cwd().makeDir(path);
+}
 
 pub fn main() !void {
-    // _ = std.process.args();
-
-    // if (std.os.argv.len < 2) return error.NoPathGiven;
-
-    // const file_path = std.os.argv[1];
-
-    // // const file = std.fs.cwd().openFile(file_path, .{}) catch |err| {
-    // //     std.log.err("Failed to open file: {s}", .{@errorName(err)});
-    // //     return;
-    // // };
-    // // defer file.close();
-
-    // // std.debug.print("{any}", .{file});
-
-    // std.debug.print("Path {s}!\n", .{file_path});
-
-    // try compiler.compiler();
-    // try vm.vm();
-
     try cli();
 }
 
 fn cli() !void {
-    const args = std.os.argv;
-
-    if (args.len == 1) {
+    if (std.os.argv.len == 1) {
         try compiler.compiler();
         return;
     }
 
-    var index: u2 = 1;
-    // var path: *u8 = "asdf";
+    // Initialize arguments
+    // Then deinitialize at the end of scope
+    var argsIterator = try std.process.ArgIterator.initWithAllocator(allocator);
+    defer argsIterator.deinit();
 
-    // // const allocator = std.heap.page_allocator;
+    // Skip executable
+    _ = argsIterator.next();
 
-    if (args[1][0] != '-') {
-        index = 2;
-        // const memory = try allocator.alloc(u8, args[1].len);
+    var path: ?[:0]const u8 = "";
 
-        // path = args[1];
+    if (std.os.argv[1][0] != '-') {
+        path = argsIterator.next();
+        print("path: {?s}\n", .{path});
     }
 
-    for (args, index..) |arg, i| {
-        std.debug.print("here {}: {s}\n", .{ i, arg });
-        if (eqlFlag(arg, "-h")) {
-            print("{s}", .{
+    // Handle all arguments
+    while (argsIterator.next()) |arg| {
+        if (eql(u8, arg, "-h")) {
+            // print help
+            log(
                 \\options:
                 \\run_path            first and optional argument for run path (if empty get current)
                 \\no flags            run already build project
                 \\-h, --help          show help
                 \\-v                  get version
+                \\-i                  init project
                 \\-b                  build mode: build (no run)
                 \\-d                  dev mode: build and run", .{});
-                \\
-            });
+            );
             return;
-        } else if (eqlFlag(arg, "-v")) {
+        } else if (eql(u8, arg, "-v")) {
+            // print version
             print("version: {s}\n", .{"0.0.0"});
+            return;
+        } else if (eql(u8, arg, "-i")) {
+            // create empty project
+            log("Init empty project");
+
+            // vir.json
+            try createFile("vir.json",
+                \\{
+                \\  "version": "0.0.0"
+                \\}
+            );
+            // try createFile(".out/.viro", "test");
+
+            // makeDir(".");
+
+            // var iter_dir = try std.fs.cwd().openDir(
+            //     ".",
+            //     .{},
+            // );
+            // defer iter_dir.close();
+
+            // _ = try iter_dir.createFile("x", .{});
+
+            return;
+        } else {
+            log(
+                \\bad argument given
+                \\valid args: no arg, -h, -v, -b, -d
+            );
             return;
         }
     }
 
-    // const allocator = std.heap.page_allocator;
-
-    // const memory = try allocator.alloc(u8, 100);
-    // defer allocator.free(memory);
-
-    // std.debug.print("{s}", .{memory});
-
-    // for (memory) |c| {
-    //     std.debug.print("{c}", .{c});
-    // }
-
     // while test $# -gt 0; do
     // case "$1" in
-    //     -v)
-    //     echo "version: 0.0.0"
-    //     shift
-    //     ;;
     //     -i)
     //     IFS='/' read -r -a array <<< $PATH
     //     NAME="${array[-1]}"
@@ -126,24 +144,4 @@ fn cli() !void {
     // echo "path: $PATH"
     // echo "build: $BUILD"
     // echo "run: $RUN"
-}
-
-fn eql(a: []const u8, b: []const u8) bool {
-    if (a.len != b.len) return false;
-    for (0..a.len) |i| {
-        if (a[i] != b[i]) {
-            std.debug.print("{}{}", .{ a[i], b[i] });
-            return false;
-        }
-    }
-    return true;
-}
-
-fn eqlFlag(a: [*:0]u8, b: *const [2:0]u8) bool {
-    if (a[0] == 0) return false;
-    if (a[1] == 0) return false;
-    if (a[2] != 0) return false;
-    if (a[0] == b[0])
-        if (a[1] == b[1]) return true;
-    return false;
 }

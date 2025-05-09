@@ -1,3 +1,4 @@
 clear
 zig build
-./zig-out/bin/vir $1 $2 $3
+cd test
+../zig-out/bin/vir $1 $2
