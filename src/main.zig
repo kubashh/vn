@@ -98,10 +98,10 @@ fn cli() !void {
     //     /bin/mkdir -p "$PATH/src"
     //     echo 'constructor() {
     // Debug.log("Hello World!")
-    // }' >> "$PATH/src/Main.dth"
+    // }' >> "$PATH/src/Main.vir"
     //     echo '{
     // "version": "0.0.0"
-    // }' >> "$PATH/dth.json"
+    // }' >> "$PATH/vir.json"
     //     exit
     //     ;;
     //     -b)
