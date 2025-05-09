@@ -1,0 +1,9 @@
+import lib.Math
+import lib.Example
+
+constructor() {
+  log(Math.add(2, 3))
+
+  const a = Example.f()
+  log(a)
+}

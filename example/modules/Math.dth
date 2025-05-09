@@ -1,0 +1,5 @@
+static fn add(a: number, b: number): number {
+  return a + b
+}
+
+static PI = 3.14

@@ -1,0 +1,16 @@
+var a = 10                    // var a: number = 10
+const b = 24                  // const b: number = 24
+fn c(a: number, b: number) {  // fn c(a: number, b: number): number {
+  return a + b                //   return a + b
+}                             // }
+
+pub var d = 1                 // pub var d: number = 1
+pub const e = [false]         // pub const e: Array<bool> = [false]
+pub fn() {                    // pub f(): bool {
+  return false                //   return false
+}                             // }
+
+static var g = "asdf"         // static var g:string = "asdf"
+static const h = "33er"       // static const h: string = "33er"
+static fn(a: string) {        // static fn(a: string): void {
+}                             // }
