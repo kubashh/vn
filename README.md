@@ -11,6 +11,9 @@ Simple language similar to Java, JavaScript and TypeSctipt
 
 # To do
 
+## Impontant
+- fix vm.zig (read file error, why given path is diffrent)
+
 ## Compiler
 - read Main file (/src/Main.vir) and bundle all files together
 - remove unused values 
