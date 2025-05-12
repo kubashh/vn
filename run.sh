@@ -1,4 +1,4 @@
 clear
 zig build
 cd test
-../zig-out/bin/vir $1 $2
+../zig-out/bin/vir $1
