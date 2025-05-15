@@ -4,7 +4,7 @@ pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
 
-    // We will also create a module for our other entry point, 'main.zig'.
+    // Entry point, `main.zig`
     const exe_mod = b.createModule(.{
         // `root_source_file` is the Zig "entry point" of the module. If a module
         // only contains e.g. external object files, you can make this `null`.
@@ -15,8 +15,7 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
     });
 
-    // This creates another `std.Build.Step.Compile`, but this one builds an executable
-    // rather than a static library.
+    // Build an executable
     const exe = b.addExecutable(.{
         .name = "vir",
         .root_module = exe_mod,
@@ -37,12 +36,6 @@ pub fn build(b: *std.Build) void {
     // This is not necessary, however, if the application depends on other installed
     // files, this ensures they will be present and in the expected location.
     run_cmd.step.dependOn(b.getInstallStep());
-
-    // This allows the user to pass arguments to the application in the build
-    // command itself, like this: `zig build run -- arg1 arg2 etc`
-    if (b.args) |args| {
-        run_cmd.addArgs(args);
-    }
 
     // This creates a build step. It will be visible in the `zig build --help` menu,
     // and can be selected like this: `zig build run`

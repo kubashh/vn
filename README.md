@@ -5,6 +5,9 @@
 ## Lang
 Simple language similar to Java, JavaScript and TypeSctipt
 
+### To think
+only `var` keyword for declaring variables (comptime oplimalization)
+
 ## Steps
 1. Program need to compile on developer divice
 2. Run on client (client need to have VVM)
