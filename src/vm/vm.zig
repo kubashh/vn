@@ -7,10 +7,10 @@ const util = @import("../lib/util.zig");
 const log = util.log;
 const fileExist = util.fileExist;
 // const readFileAlloc = util.readFileAlloc;
-const printErrorRuntime = util.printErrorRuntime;
+const Error = util.Error;
 
 pub fn vm(path: []const u8) void {
-    if (!fileExist(path)) return printErrorRuntime("Exec file at path {s} not exits!", .{path});
+    if (!fileExist(path)) Error("No exec file", "Expected at path {s}.", .{path});
 
     log("Running...");
 

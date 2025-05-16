@@ -6,7 +6,7 @@ const ArrayList = consts.ArrayList;
 const allocator = consts.allocator;
 // const StringHashMap = consts.StringHashMap;
 const ext = consts.ext;
-const mainPath = consts.mainPath;
+const pathMain = consts.pathMain;
 
 const log = util.log;
 const print = util.print;
@@ -14,11 +14,11 @@ const readFileAlloc = util.readFileAlloc;
 const split = util.split;
 const eql = util.eql;
 const fileExist = util.fileExist;
-const printErrorComptime = util.printErrorComptime;
+const Error = util.Error;
 
 pub fn compiler() !void {
-    const path = mainPath;
-    if (!fileExist(path)) return printErrorComptime("Main file at path {s} not exist!", .{path});
+    const path = pathMain;
+    if (!fileExist(path)) Error("Main file not exist", "Expected at path {s}.", .{path});
 
     log("Compiling...");
 
@@ -55,13 +55,10 @@ pub fn bundleImports(path: []const u8) !void {
     var outFile = ArrayList(u8).init(allocator);
     defer outFile.deinit();
 
-    const file = readFileAlloc(path) catch |err| switch (err) {
-        error.NotDir, error.FileNotFound => {
-            return log("Bad path");
-        },
-        else => {
-            return log("Other error!");
-        },
+    const file = readFileAlloc(path) catch |err| if (err == error.NotDir or err == error.FileNotFound) {
+        return log("Bad path");
+    } else {
+        return log("Other error!");
     };
     defer allocator.free(file);
 

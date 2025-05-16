@@ -1,9 +1,3 @@
-import Math
-import lib.Consts
-
 constructor() {
-  System.print(Math.Add(2, 5))
-  System.print(Consts.a)
-
   Debug.log("Hello World!")
 }

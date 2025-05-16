@@ -4,9 +4,9 @@ const compiler = @import("compiler/compiler.zig").compiler;
 const vm = @import("vm/vm.zig").vm;
 
 const version = consts.version;
-const outPath = consts.outPath;
-const configPath = consts.configPath;
-const mainPath = consts.mainPath;
+const pathOut = consts.pathOut;
+const pathConfig = consts.pathConfig;
+const pathMain = consts.pathMain;
 
 const print = util.print;
 const eql = util.eql;
@@ -21,7 +21,7 @@ pub inline fn cli(arg: []const u8) !void {
     } else if (eql(arg, "version")) {
         printVersion();
     } else if (eql(arg, "init")) {
-        try initProject();
+        initProject();
     } else if (eql(arg, "build")) {
         try build();
     } else if (!fileExist(arg)) {
@@ -31,19 +31,19 @@ pub inline fn cli(arg: []const u8) !void {
 
 inline fn printHelp() void {
     log(
-        \\Usage: vir [command or exePath]
+        \\Usage: vir [command or exePath or nothing]
         \\
         \\Commands:
         \\
-        \\  no_flags            Build and run project (current dir)
-        \\  build               Build project (no run)
+        \\  no_flags          Build and run project (current dir)
+        \\  build             Build project (no run)
         \\
-        \\  <runPath>           Optional argument for run path
+        \\  <runPath>         Optional argument for run path
         \\
-        \\  init                Init project
-        \\  version             Get version
+        \\  init              Init project
+        \\  version           Get version
         \\
-        \\  -h, --help          Print help
+        \\  -h, --help        Print help
     );
 }
 
@@ -51,36 +51,33 @@ inline fn printVersion() void {
     print("Vir version: {s}\n", .{version});
 }
 
-inline fn initProject() !void {
+inline fn initProject() void {
     // getNameInitProject("");
 
     // vir.json
-    try createFile(configPath,
+    createFile(pathConfig,
         \\{
         \\  "name": "
     ++ "name" ++
-        \\"
+        \\",
         \\  "version": "
     ++ version ++
         \\"
         \\}
-    );
+    ) catch {};
 
     // src
-    makeDir("src") catch |err| switch (err) {
-        error.PathAlreadyExists => {
-            return;
-        },
-        else => {},
+    makeDir("src") catch {
+        return;
     };
 
     // Main
-    try createFile(mainPath,
+    createFile(pathMain,
         \\constructor() {
         \\  Debug.log("Hello World!")
         \\}
         \\
-    );
+    ) catch {};
 }
 
 inline fn printBadArguments(path: []const u8) void {
@@ -95,7 +92,7 @@ inline fn printBadArguments(path: []const u8) void {
 inline fn dev() !void {
     try compiler();
 
-    vm(outPath ++ "viro");
+    vm(pathOut ++ "viro");
 }
 
 inline fn build() !void {

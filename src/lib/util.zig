@@ -25,16 +25,9 @@ pub inline fn concat(a: []u8, b: []u8) []u8 {
     return std.mem.concat(allocator, u8, .{ a, b });
 }
 
-inline fn printError(t: []const u8, a: []const u8, args: anytype) void {
-    print(t ++ " Error!\n" ++ a ++ "\n", args);
-}
-
-pub inline fn printErrorComptime(a: []const u8, args: anytype) void {
-    printError("Comptime", a, args);
-}
-
-pub inline fn printErrorRuntime(a: []const u8, args: anytype) void {
-    printError("Runtime", a, args);
+pub inline fn Error(t: []const u8, a: []const u8, args: anytype) void {
+    print("Error: " ++ t ++ "\n" ++ a ++ "\n", args);
+    std.process.exit(1);
 }
 
 pub inline fn makeDir(path: []const u8) !void {
@@ -52,11 +45,8 @@ pub inline fn createFile(path: []const u8, content: []const u8) !void {
 }
 
 pub inline fn fileExist(path: []const u8) bool {
-    std.fs.cwd().access(path, .{}) catch |err| switch (err) {
-        error.FileNotFound => {
-            return false;
-        },
-        else => {},
+    std.fs.cwd().access(path, .{}) catch {
+        return false;
     };
 
     return true;
@@ -75,6 +65,6 @@ pub inline fn readFileAlloc(path: []const u8) ![]u8 {
 }
 
 pub inline fn getNameInitProject() []const u8 {
-    const exePath = std.os.argv[0];
-    log(exePath);
+    const pathExe = std.os.argv[0];
+    log(pathExe);
 }

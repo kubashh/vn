@@ -9,15 +9,6 @@ pub const ArrayList = std.ArrayList;
 
 pub const version = "0.0.0";
 
-pub const configPath = "vir.json";
-pub const mainPath = "src/Main.vir";
-pub const outPath = ".out/";
-
-// const ConfigShape = struct {
-//     name: []const u8,
-//     version: []const u8,
-//     pub fn init(self: *ConfigShape, args: ConfigShape) void {
-//         self.name = args.name;
-//     }
-// };
-// pub const config = ConfigShape{ .name = "", .version = "" };
+pub const pathConfig = "vir.json";
+pub const pathMain = "src/Main.vir";
+pub const pathOut = ".out/";

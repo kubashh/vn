@@ -1,3 +1,0 @@
-static fn Add(a, b) {
-  return a + b;
-}
