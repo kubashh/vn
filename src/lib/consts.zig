@@ -11,4 +11,4 @@ pub const version = "0.0.0";
 
 pub const pathConfig = "vir.json";
 pub const pathMain = "src/Main.vir";
-pub const pathOut = ".out/";
+pub const pathOut = ".out/viro";

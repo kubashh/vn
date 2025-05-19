@@ -25,6 +25,16 @@ pub inline fn concat(a: []u8, b: []u8) []u8 {
     return std.mem.concat(allocator, u8, .{ a, b });
 }
 
+pub inline fn joinAlloc(args: anytype) []u8 {
+    return formatAlloc("{s}" ** args.len, args);
+}
+
+pub inline fn formatAlloc(fmt: []const u8, args: anytype) []u8 {
+    return std.fmt.allocPrint(allocator, fmt, args) catch |err| {
+        Error("Join Strings", "{any}", .{err});
+    };
+}
+
 pub inline fn Error(t: []const u8, a: []const u8, args: anytype) void {
     print("Error: " ++ t ++ "\n" ++ a ++ "\n", args);
     std.process.exit(1);
@@ -67,4 +77,21 @@ pub inline fn readFileAlloc(path: []const u8) ![]u8 {
 pub inline fn getNameInitProject() []const u8 {
     const pathExe = std.os.argv[0];
     log(pathExe);
+}
+
+pub inline fn copy(str: []const u8) []u8 {
+    return std.mem.Allocator.dupe(allocator, u8, str) catch |err| {
+        Error("Other", "{any}", .{err});
+    };
+}
+
+pub inline fn parseJsonAlloc(comptime T: type, file: []const u8) std.json.Parsed(T) {
+    return std.json.parseFromSlice(
+        T,
+        allocator,
+        file,
+        .{},
+    ) catch |err| {
+        Error("Cannot parse config file", "{any}", .{err});
+    };
 }

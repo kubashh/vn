@@ -1,12 +1,16 @@
 const consts = @import("lib/consts.zig");
+const config = @import("lib/config.zig");
 const util = @import("lib/util.zig");
 const compiler = @import("compiler/compiler.zig").compiler;
 const vm = @import("vm/vm.zig").vm;
+const std = @import("std");
 
+const allocator = consts.allocator;
 const version = consts.version;
 const pathOut = consts.pathOut;
-const pathConfig = consts.pathConfig;
 const pathMain = consts.pathMain;
+
+const setConfig = config.setConfig;
 
 const print = util.print;
 const eql = util.eql;
@@ -14,6 +18,8 @@ const log = util.log;
 const createFile = util.createFile;
 const fileExist = util.fileExist;
 const makeDir = util.makeDir;
+const copy = util.copy;
+const Error = util.Error;
 
 pub inline fn cli(arg: []const u8) !void {
     if (eql(arg, "-h") or eql(arg, "--help")) {
@@ -52,19 +58,14 @@ inline fn printVersion() void {
 }
 
 inline fn initProject() void {
-    // getNameInitProject("");
+    const name = getProjectNameAlloc();
+    defer allocator.free(name);
 
     // vir.json
-    createFile(pathConfig,
-        \\{
-        \\  "name": "
-    ++ "name" ++
-        \\",
-        \\  "version": "
-    ++ version ++
-        \\"
-        \\}
-    ) catch {};
+    setConfig(.{
+        .name = name,
+        .version = version,
+    });
 
     // src
     makeDir("src") catch {
@@ -80,19 +81,32 @@ inline fn initProject() void {
     ) catch {};
 }
 
+fn getProjectNameAlloc() []u8 {
+    const pathExe: []const u8 = std.process.getCwdAlloc(allocator) catch |err| {
+        Error("Get dir", "{any}", .{err});
+    };
+    defer allocator.free(pathExe);
+
+    print("{s}", .{pathExe});
+
+    var lastIndex: usize = 0;
+    for (pathExe, 0..) |c, i| {
+        if (c == '/')
+            lastIndex = i;
+    }
+
+    return copy(pathExe[lastIndex + 1 ..]);
+}
+
 inline fn printBadArguments(path: []const u8) void {
     printHelp();
-    print(
-        \\
-        \\error: no file / command: `{s}`
-        \\
-    , .{path});
+    Error("Bad command", "No file / command: `{s}`", .{path});
 }
 
 inline fn dev() !void {
     try compiler();
 
-    vm(pathOut ++ "viro");
+    vm(pathOut);
 }
 
 inline fn build() !void {

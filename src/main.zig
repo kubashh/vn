@@ -10,31 +10,24 @@ const pathOut = consts.pathOut;
 const ArgIterator = consts.ArgIterator;
 const os = consts.os;
 
-const log = util.log;
+const Config = config.Config;
+
 const Error = util.Error;
+const print = util.print;
 
 pub fn main() !void {
     if (os.argv.len == 1)
         return dev();
 
-    const name = config.getNameAlloc();
-    log(name);
-
-    // Initialize arguments
-    // Then deinitialize at the end of scope
     var argsIterator = try ArgIterator.initWithAllocator(allocator);
     defer argsIterator.deinit();
 
     // Skip exe path
-    if (argsIterator.next()) |arg| {
-        // config.path = arg;
-        _ = arg;
-    }
+    _ = argsIterator.next();
 
     // Handle argument
-    if (argsIterator.next()) |arg| {
+    if (argsIterator.next()) |arg|
         try cli(arg);
-    }
 }
 
 inline fn dev() void {
@@ -42,5 +35,5 @@ inline fn dev() void {
         Error("Other", "{any}", .{err});
     };
 
-    vm(pathOut ++ "viro");
+    vm(pathOut);
 }

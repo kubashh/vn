@@ -7,6 +7,7 @@ const allocator = consts.allocator;
 // const StringHashMap = consts.StringHashMap;
 const ext = consts.ext;
 const pathMain = consts.pathMain;
+// const pathOut = consts.pathOut;
 
 const log = util.log;
 const print = util.print;
@@ -15,6 +16,9 @@ const split = util.split;
 const eql = util.eql;
 const fileExist = util.fileExist;
 const Error = util.Error;
+// const createFile = util.createFile;
+// const formatAlloc = util.formatAlloc;
+// const copy = util.copy;
 
 pub fn compiler() !void {
     const path = pathMain;
