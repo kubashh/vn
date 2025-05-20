@@ -13,17 +13,17 @@ const readFileAlloc = fs.readFileAlloc;
 pub fn vm(path: []const u8) void {
     if (!fileExist(path)) Error("No exec file", "Expected at path {s}.", .{path});
 
-    log("Running...");
+    // log("Running...");
 
-    const file = readFileAlloc(path);
-    run(file);
+    // const file = readFileAlloc(path);
+    // run(file);
 
-    // TODO read file
-    // TODO run vm
+    // // TODO read file
+    // // TODO run vm
 
-    log("Done.");
+    // log("Done.");
 }
 
 pub inline fn run(file: []const u8) void {
-    print("{s}", .{file});
+    print("{s}\n", .{file});
 }

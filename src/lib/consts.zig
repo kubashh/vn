@@ -1,14 +1,17 @@
 const std = @import("std");
 const util = @import("util.zig");
 
+const StringHashMap = std.StringHashMap;
+
 const alloc = util.alloc;
 
 pub const allocator = std.heap.page_allocator;
 pub const ArgIterator = std.process.ArgIterator;
 pub const os = std.os;
 
-pub const StringHashMap = std.StringHashMap;
 pub const ArrayList = std.ArrayList;
+
+pub const SSHashMap = StringHashMap([]const u8);
 
 const versionFile = @embedFile("../../.version");
 pub const version = getVersion();
