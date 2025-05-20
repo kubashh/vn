@@ -1,16 +1,17 @@
 const std = @import("std");
 const consts = @import("consts.zig");
 const util = @import("util.zig");
+const fs = @import("fs.zig");
 
 const allocator = consts.allocator;
 const pathConfig = consts.pathConfig;
 
 const readFileAlloc = util.readFileAlloc;
 const Error = util.Error;
-const copy = util.copy;
-const createFile = util.createFile;
-const formatAlloc = util.formatAlloc;
+const copyAlloc = util.copyAlloc;
 const log = util.log;
+
+const saveStringifyJson = fs.saveStringifyJson;
 
 pub const ConfigShape = struct { name: []const u8, version: []const u8 };
 
@@ -26,8 +27,8 @@ pub const Config = struct {
         defer parsed.deinit();
 
         return Config{
-            .name = copy(parsed.value.name),
-            .version = copy(parsed.value.version),
+            .name = copyAlloc(parsed.value.name),
+            .version = copyAlloc(parsed.value.version),
         };
     }
 
@@ -37,12 +38,8 @@ pub const Config = struct {
     }
 };
 
-fn getConfigFileAlloc() []const u8 {
-    const file = readFileAlloc(pathConfig) catch |err| if (err == error.FileNotFound) {
-        Error("File not found", "Expected at path {s}.", .{pathConfig});
-    } else {
-        Error("At getConfigFileAlloc()", "{any}", .{err});
-    };
+inline fn getConfigFileAlloc() []const u8 {
+    const file = readFileAlloc(pathConfig);
 
     if (file.len == 0)
         Error("No configuration file", "Expected at path `{s}`", .{pathConfig});
@@ -56,41 +53,10 @@ inline fn parseJsonInit(comptime T: type, file: []const u8) std.json.Parsed(T) {
         allocator,
         file,
         .{},
-    ) catch |err| {
+    ) catch |err|
         Error("Cannot parse config file", "{any}", .{err});
-    };
 }
 
-pub fn setConfig(newConfig: ConfigShape) void {
-    stringify(pathConfig, newConfig);
-    // const content = formatAlloc(
-    //     \\{s}
-    //     \\  "name": "{s}",
-    //     \\  "version": "{s}"
-    //     \\{s}
-    // , .{ "{", newConfig.name, newConfig.version, "}" });
-    // defer allocator.free(content);
-
-    // log(content);
-
-    // createFile(pathConfig, content) catch {};
-}
-
-pub fn stringify(path: []const u8, obj: anytype) void {
-    var file = std.fs.cwd().createFile(path, .{}) catch |err| {
-        Error("stringify", "{any}", .{err});
-    };
-    defer file.close();
-
-    const options = std.json.StringifyOptions{
-        .whitespace = .indent_4,
-    };
-
-    std.json.stringify(obj, options, file.writer()) catch |err| {
-        Error("stringify", "{any}", .{err});
-    };
-
-    _ = file.write("\n") catch |err| {
-        Error("stringify", "{any}", .{err});
-    };
+pub inline fn setConfig(newConfig: ConfigShape) void {
+    saveStringifyJson(pathConfig, newConfig);
 }

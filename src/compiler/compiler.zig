@@ -1,5 +1,8 @@
-const consts = @import("../lib/consts.zig");
-const util = @import("../lib/util.zig");
+const lib = @import("../lib.zig");
+
+const consts = lib.consts;
+const util = lib.util;
+const fs = lib.fs;
 
 const ArrayList = consts.ArrayList;
 
@@ -11,14 +14,14 @@ const pathMain = consts.pathMain;
 
 const log = util.log;
 const print = util.print;
-const readFileAlloc = util.readFileAlloc;
 const split = util.split;
 const eql = util.eql;
-const fileExist = util.fileExist;
 const Error = util.Error;
 // const createFile = util.createFile;
 // const formatAlloc = util.formatAlloc;
-// const copy = util.copy;
+
+const fileExist = fs.fileExist;
+const readFileAlloc = fs.readFileAlloc;
 
 pub fn compiler() !void {
     const path = pathMain;
@@ -59,11 +62,7 @@ pub fn bundleImports(path: []const u8) !void {
     var outFile = ArrayList(u8).init(allocator);
     defer outFile.deinit();
 
-    const file = readFileAlloc(path) catch |err| if (err == error.NotDir or err == error.FileNotFound) {
-        return log("Bad path");
-    } else {
-        return log("Other error!");
-    };
+    const file = readFileAlloc(path);
     defer allocator.free(file);
 
     _ = try getImportsPath(file);

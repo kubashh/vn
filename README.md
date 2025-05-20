@@ -5,12 +5,13 @@
 ## Lang
 Simple language similar to Java, JavaScript and TypeSctipt
 
-### To think
-only `var` keyword for declaring variables (comptime oplimalization)
-no `pub` keyword (evrything public)
+### To consider
+- only `var` keyword for declaring variables (comptime oplimalization)
+- no `pub` keyword (evrything public)
+- compile directly / VM
 
 ## Steps
-1. Program need to compile on developer divice
+1. Compile (Developer)
 2. Run on client (client need to have VVM)
 
 # To do
@@ -27,4 +28,4 @@ no `pub` keyword (evrything public)
 ## VM
 - read file that contains compiled code
 - parse file
-- run file
+- run file + GC

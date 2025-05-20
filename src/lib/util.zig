@@ -2,6 +2,7 @@ const std = @import("std");
 const consts = @import("consts.zig");
 
 const allocator = consts.allocator;
+const ArgIterator = consts.ArgIterator;
 
 pub const print = std.debug.print;
 
@@ -21,8 +22,9 @@ pub inline fn logv(a: anytype) void {
     print("{any}\n", .{a});
 }
 
-pub inline fn concat(a: []u8, b: []u8) []u8 {
-    return std.mem.concat(allocator, u8, .{ a, b });
+pub inline fn Error(comptime t: []const u8, comptime a: []const u8, args: anytype) void {
+    print("Error: " ++ t ++ "\n" ++ a ++ "\n", args);
+    std.process.exit(1);
 }
 
 pub inline fn joinAlloc(args: anytype) []u8 {
@@ -30,68 +32,34 @@ pub inline fn joinAlloc(args: anytype) []u8 {
 }
 
 pub inline fn formatAlloc(fmt: []const u8, args: anytype) []u8 {
-    return std.fmt.allocPrint(allocator, fmt, args) catch |err| {
+    return std.fmt.allocPrint(allocator, fmt, args) catch |err|
         Error("Join Strings", "{any}", .{err});
-    };
 }
 
-pub inline fn Error(t: []const u8, a: []const u8, args: anytype) void {
-    print("Error: " ++ t ++ "\n" ++ a ++ "\n", args);
-    std.process.exit(1);
+pub inline fn alloc(len: u64) []u8 {
+    return allocator.alloc(u8, len) catch |err|
+        Error("Allocation", "{any}", .{err});
 }
 
-pub inline fn makeDir(path: []const u8) !void {
-    try std.fs.cwd().makeDir(path);
-}
-
-pub inline fn createFile(path: []const u8, content: []const u8) !void {
-    const file = try std.fs.cwd().createFile(
-        path,
-        .{},
-    );
-    defer file.close();
-    try file.writeAll(content);
-    print("info: created {s}\n", .{path});
-}
-
-pub inline fn fileExist(path: []const u8) bool {
-    std.fs.cwd().access(path, .{}) catch {
-        return false;
-    };
-
-    return true;
-}
-
-pub inline fn readFileAlloc(path: []const u8) ![]u8 {
-    const f = try std.fs.cwd().openFile(path, .{});
-    defer f.close(); // The file closes before we exit the function which happens before we work with the buffer.
-
-    const f_len = try f.getEndPos();
-    const buf = try allocator.alloc(u8, f_len);
-    errdefer allocator.free(buf); // In case an error happens while reading
-
-    _ = try f.readAll(buf);
-    return buf;
-}
-
-pub inline fn getNameInitProject() []const u8 {
-    const pathExe = std.os.argv[0];
-    log(pathExe);
-}
-
-pub inline fn copy(str: []const u8) []u8 {
-    return std.mem.Allocator.dupe(allocator, u8, str) catch |err| {
+pub inline fn copyAlloc(str: []const u8) []u8 {
+    return std.mem.Allocator.dupe(allocator, u8, str) catch |err|
         Error("Other", "{any}", .{err});
-    };
 }
 
 pub inline fn parseJsonAlloc(comptime T: type, file: []const u8) std.json.Parsed(T) {
-    return std.json.parseFromSlice(
-        T,
-        allocator,
-        file,
-        .{},
-    ) catch |err| {
+    return std.json.parseFromSlice(T, allocator, file, .{}) catch |err|
         Error("Cannot parse config file", "{any}", .{err});
-    };
+}
+
+pub inline fn getFirstArg() [:0]const u8 {
+    var argsIterator = try ArgIterator.initWithAllocator(allocator);
+    defer argsIterator.deinit();
+
+    // Skip exe path
+    _ = argsIterator.next();
+
+    // Handle argument
+    if (argsIterator.next()) |arg|
+        return arg;
+    return "";
 }

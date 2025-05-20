@@ -1,9 +1,11 @@
-const consts = @import("lib/consts.zig");
-const config = @import("lib/config.zig");
-const util = @import("lib/util.zig");
+const lib = @import("lib.zig");
 const compiler = @import("compiler/compiler.zig").compiler;
 const vm = @import("vm/vm.zig").vm;
-const std = @import("std");
+
+const consts = lib.consts;
+const config = lib.config;
+const util = lib.util;
+const fs = lib.fs;
 
 const allocator = consts.allocator;
 const version = consts.version;
@@ -15,13 +17,18 @@ const setConfig = config.setConfig;
 const print = util.print;
 const eql = util.eql;
 const log = util.log;
-const createFile = util.createFile;
-const fileExist = util.fileExist;
-const makeDir = util.makeDir;
-const copy = util.copy;
+const fileExist = fs.fileExist;
+const copyAlloc = util.copyAlloc;
 const Error = util.Error;
+const getFirstArg = util.getFirstArg;
 
-pub inline fn cli(arg: []const u8) !void {
+const createFile = fs.createFile;
+const getCwdAlloc = fs.getCwdAlloc;
+const makeDir = fs.makeDir;
+
+pub inline fn cli() !void {
+    const arg = getFirstArg();
+
     if (eql(arg, "-h") or eql(arg, "--help")) {
         printHelp();
     } else if (eql(arg, "version")) {
@@ -75,19 +82,15 @@ inline fn initProject() void {
     // Main
     createFile(pathMain,
         \\constructor() {
-        \\  Debug.log("Hello World!")
+        \\    Debug.log("Hello World!")
         \\}
         \\
     ) catch {};
 }
 
-fn getProjectNameAlloc() []u8 {
-    const pathExe: []const u8 = std.process.getCwdAlloc(allocator) catch |err| {
-        Error("Get dir", "{any}", .{err});
-    };
+inline fn getProjectNameAlloc() []u8 {
+    const pathExe = getCwdAlloc();
     defer allocator.free(pathExe);
-
-    print("{s}", .{pathExe});
 
     var lastIndex: usize = 0;
     for (pathExe, 0..) |c, i| {
@@ -95,7 +98,7 @@ fn getProjectNameAlloc() []u8 {
             lastIndex = i;
     }
 
-    return copy(pathExe[lastIndex + 1 ..]);
+    return copyAlloc(pathExe[lastIndex + 1 ..]);
 }
 
 inline fn printBadArguments(path: []const u8) void {
