@@ -42,7 +42,6 @@ pub inline fn createFile(path: []const u8, content: []const u8) !void {
     const file = try std.fs.cwd().createFile(path, .{});
     defer file.close();
     try file.writeAll(content);
-    print("info: created {s}\n", .{path});
 }
 
 pub inline fn getCwdAlloc() []u8 {

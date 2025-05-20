@@ -75,9 +75,7 @@ inline fn initProject() void {
     });
 
     // src
-    makeDir("src") catch {
-        return;
-    };
+    makeDir("src") catch {};
 
     // Main
     createFile(pathMain,

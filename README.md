@@ -1,6 +1,6 @@
 # VIR programming language
 
-## For now not working!
+# For now not working!
 
 ## Lang
 Simple language similar to Java, JavaScript and TypeSctipt
@@ -9,6 +9,17 @@ Simple language similar to Java, JavaScript and TypeSctipt
 - only `var` keyword for declaring variables (comptime oplimalization)
 - no `pub` keyword (evrything public)
 - compile directly / VM
+
+### `vir.json` (config file)
+```json
+{
+  "name": "name",
+  "version": "x.x.x",
+  "imports": {
+    "lib": "src/lib.vir"
+  }
+}
+```
 
 ## Steps
 1. Compile (Developer)
@@ -26,6 +37,5 @@ Simple language similar to Java, JavaScript and TypeSctipt
 - create out file
 
 ## VM
-- read file that contains compiled code
 - parse file
 - run file + GC

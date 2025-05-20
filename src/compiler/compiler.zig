@@ -111,8 +111,7 @@ inline fn getImportsPath(file: []const u8) ![]const u8 {
 
 inline fn saveOutFile(file: []const u8) void {
     print("{s}\n", .{file});
-    makeDir(pathOutDir) catch |err|
-        Error("At saveOutFile()", "{any}", .{err});
+    makeDir(pathOutDir) catch {};
     createFile(pathOut, file) catch |err|
         Error("At saveOutFile()", "{any}", .{err});
 }
