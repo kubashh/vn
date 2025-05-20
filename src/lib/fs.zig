@@ -39,10 +39,7 @@ pub inline fn readFileAlloc(path: []const u8) []u8 {
 }
 
 pub inline fn createFile(path: []const u8, content: []const u8) !void {
-    const file = try std.fs.cwd().createFile(
-        path,
-        .{},
-    );
+    const file = try std.fs.cwd().createFile(path, .{});
     defer file.close();
     try file.writeAll(content);
     print("info: created {s}\n", .{path});

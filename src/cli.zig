@@ -48,7 +48,7 @@ inline fn printHelp() void {
         \\
         \\Commands:
         \\
-        \\  no_flags          Build and run project (current dir)
+        \\  <no_flags>        Build and run project (current dir)
         \\  build             Build project (no run)
         \\
         \\  <runPath>         Optional argument for run path

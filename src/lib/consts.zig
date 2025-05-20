@@ -15,6 +15,7 @@ pub const version = getVersion();
 
 pub const pathConfig = "vir.json";
 pub const pathMain = "src/Main.vir";
+pub const pathOutDir = ".out";
 pub const pathOut = ".out/viro";
 
 fn getVersion() []const u8 {

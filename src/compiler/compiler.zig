@@ -10,7 +10,8 @@ const allocator = consts.allocator;
 // const StringHashMap = consts.StringHashMap;
 const ext = consts.ext;
 const pathMain = consts.pathMain;
-// const pathOut = consts.pathOut;
+const pathOut = consts.pathOut;
+const pathOutDir = consts.pathOutDir;
 
 const log = util.log;
 const print = util.print;
@@ -22,6 +23,8 @@ const Error = util.Error;
 
 const fileExist = fs.fileExist;
 const readFileAlloc = fs.readFileAlloc;
+const createFile = fs.createFile;
+const makeDir = fs.makeDir;
 
 pub fn compiler() !void {
     const path = pathMain;
@@ -29,12 +32,16 @@ pub fn compiler() !void {
 
     log("Compiling...");
 
+    const file = readFileAlloc(pathMain);
+
     try bundleImports(path);
+
+    saveOutFile(file);
 
     log("Done.");
 }
 
-pub fn bundleImports(path: []const u8) !void {
+inline fn bundleImports(path: []const u8) !void {
     log("Bundling imports...");
 
     // var map = StringHashMap([]const u8).init(allocator);
@@ -79,7 +86,7 @@ pub fn bundleImports(path: []const u8) !void {
     // log(file);
 }
 
-fn getImportsPath(file: []const u8) ![]const u8 {
+inline fn getImportsPath(file: []const u8) ![]const u8 {
     var list = ArrayList([]const u8).init(allocator);
     defer list.deinit();
 
@@ -100,4 +107,12 @@ fn getImportsPath(file: []const u8) ![]const u8 {
     }
 
     return out;
+}
+
+inline fn saveOutFile(file: []const u8) void {
+    print("{s}\n", .{file});
+    makeDir(pathOutDir) catch |err|
+        Error("At saveOutFile()", "{any}", .{err});
+    createFile(pathOut, file) catch |err|
+        Error("At saveOutFile()", "{any}", .{err});
 }
