@@ -24,7 +24,10 @@ pub fn compiler() !void {
     log("Compiling...");
 
     const file = try bundleImportAlloc();
-    // defer allocator.free(file);
+    defer allocator.free(file);
+
+    // TODO check files
+    // TODO compile to zig?
 
     saveOutFile(file);
 
@@ -32,7 +35,6 @@ pub fn compiler() !void {
 }
 
 inline fn saveOutFile(file: []const u8) void {
-    print("{s}\n", .{file});
     makeDir(pathOutDir) catch {};
     createFile(pathOut, file) catch |err|
         Error("At saveOutFile()", "{any}", .{err});

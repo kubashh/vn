@@ -26,9 +26,7 @@ const createFile = fs.createFile;
 const getCwdAlloc = fs.getCwdAlloc;
 const makeDir = fs.makeDir;
 
-pub inline fn cli() !void {
-    const arg = getFirstArg();
-
+pub inline fn cli(arg: []const u8) !void {
     if (eql(arg, "-h") or eql(arg, "--help")) {
         printHelp();
     } else if (eql(arg, "version")) {

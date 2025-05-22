@@ -1,3 +1,4 @@
+const std = @import("std");
 const lib = @import("src/lib.zig");
 const cli = @import("src/cli.zig").cli;
 const compiler = @import("src/compiler/compiler.zig").compiler;
@@ -12,12 +13,16 @@ const ArgIterator = consts.ArgIterator;
 const os = consts.os;
 
 const Error = util.Error;
+const getFirstArgAlloc = util.getFirstArgAlloc;
 
 pub fn main() !void {
-    if (os.argv.len == 1)
+    const arg = getFirstArgAlloc();
+    defer allocator.free(arg);
+
+    if (arg.len == 0)
         return dev();
 
-    try cli();
+    try cli(arg);
 }
 
 inline fn dev() void {

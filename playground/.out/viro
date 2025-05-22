@@ -1,1 +1,16 @@
-OUT_FILE
+const Main = module {
+constructor() {
+  Debug.log("Hello World!")
+}
+
+}
+const Add = module {
+fn add(a: u8, b: u8) u8 {
+  return a + b
+}
+
+}
+const Math = module {
+const pi = 3.14
+
+}

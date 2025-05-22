@@ -9,11 +9,10 @@ const pathConfig = consts.pathConfig;
 const readFileAlloc = util.readFileAlloc;
 const Error = util.Error;
 const copyAlloc = util.copyAlloc;
-const log = util.log;
 
 const saveStringifyJson = fs.saveStringifyJson;
 
-pub const ConfigShape = struct { name: []const u8, version: []const u8 };
+const ConfigShape = struct { name: []const u8, version: []const u8 };
 
 pub const Config = struct {
     name: []u8,

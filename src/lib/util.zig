@@ -1,8 +1,11 @@
 const std = @import("std");
 const consts = @import("consts.zig");
+const testing = @import("testing.zig");
 
 const allocator = consts.allocator;
-const ArgIterator = consts.ArgIterator;
+const SplitIterator = consts.SplitIterator;
+
+const expect = testing.expect;
 
 pub const print = std.debug.print;
 
@@ -10,7 +13,14 @@ pub inline fn eql(a: []const u8, b: []const u8) bool {
     return std.mem.eql(u8, a, b);
 }
 
-pub inline fn split(a: []const u8, b: []const u8) std.mem.SplitIterator(u8, .any) {
+pub inline fn include(s: []const u8, d: u8) bool {
+    for (s) |c|
+        if (c == d) return false;
+
+    return true;
+}
+
+pub inline fn split(a: []const u8, b: []const u8) SplitIterator {
     return std.mem.splitAny(u8, a, b);
 }
 
@@ -51,15 +61,23 @@ pub inline fn parseJsonAlloc(comptime T: type, file: []const u8) std.json.Parsed
         Error("Cannot parse config file", "{any}", .{err});
 }
 
-pub inline fn getFirstArg() [:0]const u8 {
-    var argsIterator = try ArgIterator.initWithAllocator(allocator);
-    defer argsIterator.deinit();
+pub inline fn getFirstArgAlloc() []u8 {
+    const args = std.process.argsAlloc(allocator) catch |err|
+        Error("Args", "{any}", .{err});
+    defer allocator.free(args);
 
-    // Skip exe path
-    _ = argsIterator.next();
+    if (args.len < 2)
+        return "";
 
-    // Handle argument
-    if (argsIterator.next()) |arg|
-        return arg;
-    return "";
+    return copyAlloc(args[1]);
+}
+
+// arg - command word ex: &[_][]const u8{ "zig", "build" }
+pub inline fn sh(argv: []const []const u8) !void {
+    var cmd = std.process.Child.init(argv, allocator);
+    try cmd.spawn();
+
+    const out = try cmd.wait();
+    if (out.Exited != 0)
+        Error("Bash line", "returned process {}", .{out.Exited});
 }

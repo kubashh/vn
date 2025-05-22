@@ -6,10 +6,21 @@ const allocator = consts.allocator;
 
 const print = util.print;
 const Error = util.Error;
+const formatAlloc = util.formatAlloc;
+
+pub inline fn joinPathAlloc(a: []const u8, b: []const u8) []u8 {
+    return formatAlloc("{s}/{s}", .{ a, b });
+}
+
 const alloc = util.alloc;
 
 pub inline fn makeDir(path: []const u8) !void {
     try std.fs.cwd().makeDir(path);
+}
+
+pub inline fn openIterateDir(path: []const u8) std.fs.Dir {
+    return std.fs.cwd().openDir(path, .{ .iterate = true }) catch |err|
+        Error("File not found", "path: {s}, err: {any}", .{ path, err });
 }
 
 pub inline fn fileExist(path: []const u8) bool {
