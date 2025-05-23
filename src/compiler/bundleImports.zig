@@ -8,18 +8,23 @@ const allocator = consts.allocator;
 const ArrayList = consts.ArrayList;
 
 const log = util.log;
+const print = util.print;
 const split = util.split;
 const formatAlloc = util.formatAlloc;
 const copyAlloc = util.copyAlloc;
 const include = util.include;
+const Error = util.Error;
 
 const joinPathAlloc = fs.joinPathAlloc;
 const readFileAlloc = fs.readFileAlloc;
 const openIterateDir = fs.openIterateDir;
 
-pub inline fn bundleImportAlloc() ![]const u8 {
-    log("Bundling imports...");
+pub inline fn bundleImportAlloc() []const u8 {
+    return bundledFile() catch |err|
+        Error("", "{any}", .{err});
+}
 
+inline fn bundledFile() ![]u8 {
     var outFile = ArrayList(u8).init(allocator);
     defer outFile.deinit();
 

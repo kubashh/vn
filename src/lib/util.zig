@@ -72,7 +72,7 @@ pub inline fn getFirstArgAlloc() []u8 {
     return copyAlloc(args[1]);
 }
 
-// arg - command word ex: &[_][]const u8{ "zig", "build" }
+// arg - command word ex: &[_][]const u8{ "zig", "version" }
 pub inline fn sh(argv: []const []const u8) !void {
     var cmd = std.process.Child.init(argv, allocator);
     try cmd.spawn();
@@ -80,4 +80,11 @@ pub inline fn sh(argv: []const []const u8) !void {
     const out = try cmd.wait();
     if (out.Exited != 0)
         Error("Bash line", "returned process {}", .{out.Exited});
+}
+
+pub inline fn nowMs() i64 {
+    return std.time.milliTimestamp();
+}
+pub inline fn nowMicro() i64 {
+    return std.time.microTimestamp();
 }

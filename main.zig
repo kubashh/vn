@@ -26,8 +26,7 @@ pub fn main() !void {
 }
 
 inline fn dev() void {
-    compiler() catch |err|
-        Error("Other", "{any}", .{err});
+    compiler();
 
     vm(pathOut);
 }

@@ -103,13 +103,13 @@ inline fn printBadArguments(path: []const u8) void {
 }
 
 inline fn dev() !void {
-    try compiler();
+    compiler();
 
     vm(pathOut);
 }
 
 inline fn build() !void {
-    try compiler();
+    compiler();
 }
 
 inline fn exe(arg: []const u8) void {
