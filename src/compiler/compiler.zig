@@ -28,8 +28,10 @@ pub fn compiler() void {
     TimeMesure.end();
 
     // TODO check files checkFile()
-    // TODO twim file twimFileAllocFree()
-    // TODO compile to zig? compileToZig()
+
+    // TODO removeCommandsAllocFree()
+    // TODO twimFileAllocFree()
+    // TODO ? compileToZig()
 
     TimeMesure.start("Emiting output");
     emitOutFree(file);
