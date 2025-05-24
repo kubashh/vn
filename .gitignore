@@ -2,8 +2,7 @@
 /.zig-cache
 /zig-out
 
-# Dth
-example/.out
+# /playground/.out
 
 # VsCode
 .vscode
