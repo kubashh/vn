@@ -1,2 +1,0 @@
-compiles ./src.Main to ./out/.dtho
-runs ./out/.dtho

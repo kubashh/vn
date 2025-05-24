@@ -1,24 +1,25 @@
-# VIR programming language
-
+# VN programming language
 
 # For now not working!
 
+## 1. Lang
 
-## Lang
-Simple language similar to Java, JavaScript and TypeSctipt
+Simple compiled programming language similar to Zig, Java, JavaScript and TypeSctipt
 
 ## Help
+
 ```shell
-./vir/install/path -h
+./vn/install/path -h
 ```
 
-## `vir.json` (config file)
+## `vn.json` (config file)
+
 ```json
 {
   "name": "name",
   "version": "x.x.x",
   "imports": {
-    "lib": "src/lib.vir"
+    "lib": "src/lib.vn"
   },
   "enabledFiles": {
     "f1": "res/f1.png",
@@ -29,56 +30,70 @@ Simple language similar to Java, JavaScript and TypeSctipt
     "aarch64-macos": false,
     "x86_64-linux-gnu": false,
     "x86_64-linux-musl": false,
-    "x86_64-windows": false,
+    "x86_64-windows": false
   }
 }
 ```
 
-
-# Dev
-
-## usage
+## Usage
 
 ### Run tests
+
 ```shell
 sh test.sh
 ```
 
 ### Run program
+
 ```shell
 sh run.sh
 ```
 
 ### Cross compilation
+
 ```shell
 zig build -- a
 ```
 
-## To consider
-- only `var` keyword for declaring variables (comptime oplimalization)
-- fn as `const`
-- no `pub` keyword (evrything public)
-- compile to zig => os directly / VM
+## Lang keywords
+- `var`
+- `const`
+- `fn` // maybe `const`
 
-## Concepts
-- Error ends program, error not ends program (can return, tr and catch error like in zig)
+### To do
+- `pub`
+- `u{1-128}`
+- `i{1-128}`
+- `f16`, `f32`, `f64`, `f80`, `f128`
+- `enum`
+- `error`
+- `Error`
 
-## Steps
-1. Compile (Developer)
-2. Run on client (client need to have VVM)
+## Types
+
+### 1. Numbers
+1. `u{1-128}`
+2. `i{1-128}`
+3. `f16`, `f32`, `f64`, `f80`, `f128`,
+
+### 2. errors
+1. `error` not ends program (can return, tr and catch `error` like in zig)
+2. `Error` ends program
+
+### 3. `enum`
+
+### 4. Declaration
+1. `var`
+2. `const`
+3. `fn`
+
+### 5. Before declaration
+1. `pub`
+2. `static` ?
 
 
-# To do
+## To do
 
-## Impontant
-- fix vm.zig (read file error, why given path is diffrent)
-
-## Compiler
-- read Main file (/src/Main.vir) and bundle all files together
-- remove unused values 
+- remove unused values
 - rename to ptr
-- create out file
-
-## VM
-- parse file
-- run file + GC
+- create exe's

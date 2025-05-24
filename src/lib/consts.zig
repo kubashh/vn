@@ -16,10 +16,10 @@ pub const SSHashMap = StringHashMap([]const u8);
 const versionFile = @embedFile("../../.version");
 pub const version = getVersion();
 
-pub const pathConfig = "vir.json";
-pub const pathMain = "src/Main.vir";
+pub const pathConfig = "vn.json";
+pub const pathMain = "src/Main.vn";
 pub const pathOutDir = ".out";
-pub const pathOut = ".out/viro";
+pub const pathOut = ".out/vno.zig";
 
 fn getVersion() []const u8 {
     var lastIndex: usize = 0;

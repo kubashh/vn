@@ -1,6 +1,6 @@
 const std = @import("std");
 
-const name = "vir";
+const name = "vn";
 const pathMain = "main.zig";
 const optimize = .ReleaseFast; // .ReleaseSafe
 

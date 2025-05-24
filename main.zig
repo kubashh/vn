@@ -2,7 +2,6 @@ const std = @import("std");
 const lib = @import("src/lib.zig");
 const cli = @import("src/cli.zig").cli;
 const compiler = @import("src/compiler/compiler.zig").compiler;
-const vm = @import("src/vm/vm.zig").vm;
 
 const consts = lib.consts;
 const util = lib.util;
@@ -27,6 +26,4 @@ pub fn main() !void {
 
 inline fn dev() void {
     compiler();
-
-    vm(pathOut);
 }

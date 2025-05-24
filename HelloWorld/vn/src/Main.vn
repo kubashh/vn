@@ -1,0 +1,3 @@
+constructor() {
+  print("Hello World")
+}

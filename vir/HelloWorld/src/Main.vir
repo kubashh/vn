@@ -1,3 +1,0 @@
-constructor() {
-  System.print("Hello World")
-}

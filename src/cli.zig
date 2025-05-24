@@ -1,6 +1,5 @@
 const lib = @import("lib.zig");
 const compiler = @import("compiler/compiler.zig").compiler;
-const vm = @import("vm/vm.zig").vm;
 
 const consts = lib.consts;
 const config = lib.config;
@@ -17,10 +16,8 @@ const setConfig = config.setConfig;
 const print = util.print;
 const eql = util.eql;
 const log = util.log;
-const fileExist = fs.fileExist;
 const copyAlloc = util.copyAlloc;
 const Error = util.Error;
-const getFirstArg = util.getFirstArg;
 
 const createFile = fs.createFile;
 const getCwdAlloc = fs.getCwdAlloc;
@@ -35,38 +32,34 @@ pub inline fn cli(arg: []const u8) !void {
         initProject();
     } else if (eql(arg, "build")) {
         try build();
-    } else if (!fileExist(arg)) {
-        printBadArguments(arg);
-    } else exe(arg);
+    } else printBadArguments(arg);
 }
 
 inline fn printHelp() void {
     log(
-        \\Usage: vir [command or exePath or nothing]
+        \\Usage: vn [command or exePath or nothing]
         \\
         \\Commands:
         \\
         \\  <no_flags>        Build and run project (current dir)
         \\  build             Build project (no run)
         \\
-        \\  <runPath>         Optional argument for run path
-        \\
         \\  init              Init project
-        \\  version           Get version
+        \\  version           Print version
         \\
         \\  -h, --help        Print help
     );
 }
 
 inline fn printVersion() void {
-    print("Vir version: {s}\n", .{version});
+    print("Vn version: {s}\n", .{version});
 }
 
 inline fn initProject() void {
     const name = getProjectNameAlloc();
     defer allocator.free(name);
 
-    // vir.json
+    // vn.json
     setConfig(.{
         .name = name,
         .version = version,
@@ -78,7 +71,7 @@ inline fn initProject() void {
     // Main
     createFile(pathMain,
         \\constructor() {
-        \\    Debug.log("Hello World!")
+        \\    print("Hello World!")
         \\}
         \\
     ) catch {};
@@ -102,18 +95,6 @@ inline fn printBadArguments(path: []const u8) void {
     Error("Bad command", "No file / command: `{s}`", .{path});
 }
 
-inline fn dev() !void {
-    compiler();
-
-    vm(pathOut);
-}
-
 inline fn build() !void {
     compiler();
-}
-
-inline fn exe(arg: []const u8) void {
-    if (!fileExist(arg)) {
-        log("File not found");
-    } else vm(arg);
 }

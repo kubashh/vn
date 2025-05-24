@@ -20,11 +20,13 @@ const readFileAlloc = fs.readFileAlloc;
 const openIterateDir = fs.openIterateDir;
 
 pub inline fn bundleImportAlloc() []const u8 {
-    return bundledFile() catch |err|
+    const file = bundledFileAlloc() catch |err|
         Error("", "{any}", .{err});
+    // TODO join std lib; print; main call; with file
+    return file;
 }
 
-inline fn bundledFile() ![]u8 {
+inline fn bundledFileAlloc() ![]u8 {
     var outFile = ArrayList(u8).init(allocator);
     defer outFile.deinit();
 
@@ -38,9 +40,9 @@ inline fn bundledFile() ![]u8 {
 
         try outFile.appendSlice("const ");
         try outFile.appendSlice(getFileName(path));
-        try outFile.appendSlice(" = module {\n");
+        try outFile.appendSlice(" = struct {\n");
         try outFile.appendSlice(file);
-        try outFile.appendSlice("\n}\n");
+        try outFile.appendSlice("\n};\n");
     }
 
     return copyAlloc(outFile.items);
