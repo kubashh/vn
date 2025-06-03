@@ -20,8 +20,16 @@ const readFileAlloc = fs.readFileAlloc;
 const openIterateDir = fs.openIterateDir;
 
 pub inline fn bundleImportAlloc() []const u8 {
-    const file = bundledFileAlloc() catch |err|
+    const imports = bundledFileAlloc() catch |err|
         Error("", "{any}", .{err});
+    defer allocator.free(imports);
+
+    const file = util.joinAlloc(.{
+        vnStd,
+        imports,
+        mainRun,
+    });
+
     // TODO join std lib; print; main call; with file
     return file;
 }
@@ -92,3 +100,30 @@ inline fn getFileName(path: []const u8) []const u8 {
 
     return path[index + 1 .. indexLast];
 }
+
+const vnStd =
+    \\const std = @import("std");
+    \\
+    \\inline fn print(a: []const u8) void {
+    \\    std.debug.print("{s}\n", .{a});
+    \\}
+    \\inline fn printin(a: []const u8) void {
+    \\    std.debug.print("{s}", .{a});
+    \\}
+    \\
+    \\const Number = struct {
+    \\    fn toString(n: anytype) []const u8 {
+    \\        var buffer: [4096]u8 = undefined;
+    \\        const result = std.fmt.bufPrintZ(buffer[0..], "{d}", .{n}) catch unreachable;
+    \\        return @as([]const u8, result);
+    \\    }
+    \\};
+    \\
+    \\const String = struct {};
+;
+
+const mainRun =
+    \\pub fn main() void {
+    \\    Main.main();
+    \\}
+;

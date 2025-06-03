@@ -1,3 +1,4 @@
-fn main() {
-  print("Hello World!")
+fn main() void {
+  print("Hello World!");
+  print(Number.toString(3.53));
 }

@@ -4,6 +4,7 @@ const testing = @import("testing.zig");
 
 const allocator = consts.allocator;
 const SplitIterator = consts.SplitIterator;
+const ArrayList = consts.ArrayList;
 
 const expect = testing.expect;
 
@@ -72,12 +73,33 @@ pub inline fn getFirstArgAlloc() []u8 {
     return copyAlloc(args[1]);
 }
 
-// arg - command word ex: &[_][]const u8{ "zig", "version" }
-pub inline fn sh(argv: []const []const u8) !void {
-    var cmd = std.process.Child.init(argv, allocator);
-    try cmd.spawn();
+fn splitInit(a: []const u8) ArrayList([]const u8) {
+    var list = ArrayList([]const u8).init(allocator);
+    // defer list.deinit();
 
-    const out = try cmd.wait();
+    var ite = split(a, " ");
+    while (ite.next()) |s| {
+        list.append(s) catch |err|
+            Error("List", "{any}", .{err});
+    }
+
+    return list;
+
+    // return &[_][]const u8{ "zig", "version" };
+}
+
+// arg - command word ex: &[_][]const u8{ "zig", "version" }
+pub inline fn sh(argv: []const u8) void {
+    const list = splitInit(argv);
+    defer list.deinit();
+    const args = list.items;
+
+    var cmd = std.process.Child.init(args, allocator);
+    cmd.spawn() catch |err|
+        Error("Bash", "{any}", .{err});
+
+    const out = cmd.wait() catch |err|
+        Error("Bash", "{any}", .{err});
     if (out.Exited != 0)
         Error("Bash line", "returned process {}", .{out.Exited});
 }

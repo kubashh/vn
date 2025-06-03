@@ -23,7 +23,7 @@ const createFile = fs.createFile;
 const getCwdAlloc = fs.getCwdAlloc;
 const makeDir = fs.makeDir;
 
-pub inline fn cli(arg: []const u8) !void {
+pub inline fn cli(arg: []const u8) void {
     if (eql(arg, "-h") or eql(arg, "--help")) {
         printHelp();
     } else if (eql(arg, "version")) {
@@ -31,13 +31,13 @@ pub inline fn cli(arg: []const u8) !void {
     } else if (eql(arg, "init")) {
         initProject();
     } else if (eql(arg, "build")) {
-        try build();
+        build();
     } else printBadArguments(arg);
 }
 
 inline fn printHelp() void {
     log(
-        \\Usage: vn [command or exePath or nothing]
+        \\Usage: vn [command or nothing]
         \\
         \\Commands:
         \\
@@ -95,6 +95,6 @@ inline fn printBadArguments(path: []const u8) void {
     Error("Bad command", "No file / command: `{s}`", .{path});
 }
 
-inline fn build() !void {
+inline fn build() void {
     compiler();
 }

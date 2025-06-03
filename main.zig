@@ -13,17 +13,22 @@ const os = consts.os;
 
 const Error = util.Error;
 const getFirstArgAlloc = util.getFirstArgAlloc;
+const sh = util.sh;
 
-pub fn main() !void {
+pub fn main() void {
     const arg = getFirstArgAlloc();
     defer allocator.free(arg);
 
     if (arg.len == 0)
         return dev();
 
-    try cli(arg);
+    cli(arg);
 }
 
 inline fn dev() void {
     compiler();
+
+    // sh("echo ----------------------------");
+    // sh("zig build");
+    // sh(".out/bin/vno");
 }

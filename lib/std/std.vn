@@ -1,0 +1,18 @@
+const std = @import("std");
+
+inline fn print(a: string) void {
+    std.debug.print("{s}\n", .{a});
+}
+inline fn printin(a: string) void {
+    std.debug.print("{s}", .{a});
+}
+
+const Number = struct {
+    fn toString(n: anytype) string {
+        var buffer: [4096]u8 = undefined;
+        const result = std.fmt.bufPrintZ(buffer[0..], "{d}", .{n}) catch unreachable;
+        return @as([]const u8, result);
+    }
+};
+
+const String = struct {};
