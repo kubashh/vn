@@ -13,22 +13,9 @@ pub const SplitIterator = std.mem.SplitIterator(u8, .any);
 
 pub const SSHashMap = StringHashMap([]const u8);
 
-const versionFile = @embedFile("../../.version");
-pub const version = getVersion();
+pub const version = "0.0.4";
 
 pub const pathConfig = "vn.json";
 pub const pathMain = "src/Main.vn";
 pub const pathOutDir = ".out";
 pub const pathOut = ".out/vno.zig";
-
-fn getVersion() []const u8 {
-    var lastIndex: usize = 0;
-    var count: u2 = 0;
-    for (versionFile, 0..) |c, i| if (c == '.') {
-        lastIndex = i;
-        if (count > 2) break;
-        count += 1;
-    };
-
-    return versionFile[0..lastIndex];
-}
